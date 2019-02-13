@@ -6,4 +6,24 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <!--Each main fragment needs:
+        nav text
+        fragment text
+        -->
+    <string name="home_nav_text">Home</string>
+    <string name="home_fragment_text">TelloMapper</string>
+
+
+    <string name="edit_nav_text">Edit</string>
+    <string name="edit_fragment_text">Edit a Path</string>
+
+
+    <string name="fly_nav_text">Fly</string>
+    <string name="fly_fragment_text">Fly a Path</string>
+
+
+    <string name="diagnostics_nav_text">Diagnostics</string>
+    <string name="diagnostics_fragment_text">Diagnose Tello</string>
+
 </resources>

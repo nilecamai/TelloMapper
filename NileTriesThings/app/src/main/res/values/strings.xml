@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">NileTriesThings</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="fragment1title">Fragment1</string>
+    <string name="fragment2title">Fragment2</string>
+    <string name="fragment3title">Fragment3</string>
+</resources>
