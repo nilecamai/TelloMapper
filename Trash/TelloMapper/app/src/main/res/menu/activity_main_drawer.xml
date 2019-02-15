@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="@string/nav_drawer_create_header">
+        <menu>
+            <item
+                android:id="@+id/nav_test"
+                android:icon="@android:drawable/stat_notify_more"
+                android:title="Test" />
+            <item
+                android:id="@+id/nav_new"
+                android:icon="@drawable/ic_new"
+                android:title="@string/nav_drawer_new" />
+            <item
+                android:id="@+id/nav_edit"
+                android:icon="@drawable/ic_edit"
+                android:title="@string/nav_drawer_edit" />
+
+            <item
+                android:id="@+id/nav_fly"
+                android:icon="@drawable/ic_fly"
+                android:title="@string/nav_drawer_fly" />
+            <item
+                android:id="@+id/nav_gallery"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="@string/nav_drawer_gallery" />
+            <item
+                android:id="@+id/nav_manage"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="@string/nav_drawer_settings" />
+        </menu>
+    </item>
+
+
+    <item android:title="PLACEHOLDER">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_drawer_share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="full send?" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TelloMapper</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">TelloMapper</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- I made these so they're probably kinda bad -->
+    <string name="nav_drawer_create_header">Create</string>
+    <string name="nav_drawer_new">New</string>
+    <string name="nav_drawer_edit">Edit</string>
+    <string name="nav_drawer_fly">Fly</string>
+    <string name="nav_drawer_gallery">Gallery</string>
+    <string name="nav_drawer_settings">Settings</string>
+    <string name="nav_drawer_share">Share</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
