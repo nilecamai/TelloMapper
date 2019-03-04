@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
 
         //  When app is launched, display the home fragment in the drawer activity
         setTitle(getString(R.string.home_fragment_text));
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new HomeFragment(), "Home").commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, new HomeFragment(), "Home").commit();
     }
 
     @Override
@@ -83,19 +83,19 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             setTitle(getString(R.string.home_fragment_text));
             fragment = new HomeFragment();
-            fragmentTransaction.replace(R.id.content_frame, fragment, "Home").commit();
+            fragmentTransaction.replace(R.id.content_main, fragment, "Home").commit();
         } else if (id == R.id.nav_edit) {
             setTitle(getString(R.string.edit_fragment_text));
             fragment = new EditFragment();
-            fragmentTransaction.replace(R.id.content_frame, fragment, "Edit").commit();
+            fragmentTransaction.replace(R.id.content_main, fragment, "Edit").commit();
         } else if (id == R.id.nav_diagnostics) {
             setTitle(getString(R.string.diagnostics_fragment_text));
             fragment = new DiagnosticsFragment();
-            fragmentTransaction.replace(R.id.content_frame, fragment, "Diagnostics").commit();
+            fragmentTransaction.replace(R.id.content_main, fragment, "Diagnostics").commit();
         } else if (id == R.id.nav_fly) {
             setTitle(getString(R.string.fly_fragment_text));
             fragment = new FlyFragment();
-            fragmentTransaction.replace(R.id.content_frame, fragment, "Fly").commit();
+            fragmentTransaction.replace(R.id.content_main, fragment, "Fly").commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
