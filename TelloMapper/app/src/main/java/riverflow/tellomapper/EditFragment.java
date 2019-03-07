@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,12 +40,11 @@ public class EditFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
-        View canvasView = view.findViewById(R.id.canvasView);
-        final TextView coordTextView = view.findViewById(R.id.coordTextView);
-        final ToggleButton newNodeToggleButton = view.findViewById(R.id.newNodeToggleButton);
+        View canvasView = view.findViewById(R.id.canvas_view);
+        final TextView coordTextView = view.findViewById(R.id.coord_text_view);
 
         // get rid of this one here and in xml code when done
-        final TextView testTextView = view.findViewById(R.id.testTextView);
+        final TextView testTextView = view.findViewById(R.id.test_text_view);
         testTextView.setText(test + " ");
 
         // set the edit box
@@ -59,7 +59,7 @@ public class EditFragment extends Fragment {
         final int canvasWidth = canvasView.getLayoutParams().width;
         final int canvasHeight = canvasView.getLayoutParams().height;
 
-                canvasView.setOnTouchListener(new View.OnTouchListener() {
+        canvasView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -79,22 +79,24 @@ public class EditFragment extends Fragment {
                 // jk let's test something out
                 testTextView.setText(test + " ");
 
-                if (newNodeToggleButton.isChecked()) {
-                    // coordTextView.setText("WAHOO\nx:\t" + (int)x + "\ny:\t" + (int)y);
-                    coordTextView.setText("Coordinates:\n" + tempCoordinate);
-                }
                 return true;
             }
         });
 
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
+        // button stuff
+        ToggleButton editToggleButton = view.findViewById(R.id.edit_toggle_button);
+        Button addNodeButton = view.findViewById(R.id.add_node_button);
+        Button removeNodeButton = view.findViewById(R.id.remove_node_button);
+        addNodeButton.setVisibility(View.INVISIBLE);
 
         return view;
+    }
+
+    public void changeEditState(ToggleButton toggleButton) {
+        boolean checked = toggleButton.isChecked();
+        if (checked) {
+            // do a thing
+        }
     }
 
 }

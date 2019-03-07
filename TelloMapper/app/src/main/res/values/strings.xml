@@ -17,6 +17,10 @@
 
     <string name="edit_nav_text">Edit</string>
     <string name="edit_fragment_text">Edit a Path</string>
+    <string name="edit_toggle_on_text">Editing</string>
+    <string name="edit_toggle_off_text">Click to Edit</string>
+    <string name="add_node_button_text">Add Node</string>
+    <string name="remove_node_button_text">Remove Node</string>
 
 
     <string name="fly_nav_text">Fly</string>
