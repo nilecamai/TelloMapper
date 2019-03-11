@@ -21,6 +21,7 @@
     <string name="edit_toggle_off_text">Click to Edit</string>
     <string name="add_node_button_text">Add Node</string>
     <string name="remove_node_button_text">Remove Node</string>
+    <string name="save_button_text">Save Path</string>
 
 
     <string name="fly_nav_text">Fly</string>

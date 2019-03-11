@@ -9,6 +9,12 @@ public class Coordinate {
 
     }
 
+    // use this for duplicating coordinates
+    public Coordinate(Coordinate coordinate) {
+        x = coordinate.getX();
+        y = coordinate.getY();
+    }
+
     public Coordinate(float x, float y) {
         this.x = x;
         this.y = y;
@@ -33,4 +39,5 @@ public class Coordinate {
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
+
 }

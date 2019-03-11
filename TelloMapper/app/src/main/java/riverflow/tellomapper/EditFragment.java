@@ -19,6 +19,8 @@ import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,15 +36,17 @@ public class EditFragment extends Fragment {
 
     Button addNodeButton;
     Button removeNodeButton;
+    Button saveButton;
     TextView coordTextView;
     TextView testTextView;
+    Coordinate tempCoordinate = null;
+    ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // variables n stuff
         Path path = new Path();
-        final Coordinate tempCoordinate = new Coordinate();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
@@ -74,6 +78,8 @@ public class EditFragment extends Fragment {
                 x = event.getX();
                 y = event.getY();
                 */
+
+                tempCoordinate = new Coordinate();
                 tempCoordinate.setX(event.getX());
                 tempCoordinate.setY(event.getY());
                 // display coordinates
@@ -91,20 +97,62 @@ public class EditFragment extends Fragment {
 
         // button stuff
         ToggleButton editToggleButton = view.findViewById(R.id.edit_toggle_button);
+        editToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToggleButton toggleButton = (ToggleButton)v;
+                boolean checked = toggleButton.isChecked();
+                if (checked) {
+                    // testTextView.setText("HLOLOLSDHFLIHESKJHDFLKUEHE");
+                    setNodeButtonState(true);
+                } else {
+                    setNodeButtonState(false);
+                }
+
+            }
+        });
         addNodeButton = view.findViewById(R.id.add_node_button);
         removeNodeButton = view.findViewById(R.id.remove_node_button);
-        addNodeButton.setEnabled(false);
-        removeNodeButton.setEnabled(false);
+        setNodeButtonState(false);
+        addNodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tempCoordinate != null) {
+                    // draw STUFF
+                    coordinates.add(new Coordinate(tempCoordinate));
+                    tempCoordinate = null;
+                } else {
+                    testTextView.setText("No coordinate specified.");
+                }
+            }
+        });
+        removeNodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*
+                // THIS IS NOT ACTUALLY WHAT IT'S SUPPOSED TO DO I just didn't want to make another button
+                testTextView.setText(coordinates + "");
+                */
+                coordinates.remove(coordinates.size()-1);
+            }
+        });
+        saveButton = view.findViewById(R.id.save_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
         return view;
     }
 
-    public void changeEditState(View view) {
-        ToggleButton toggleButton = (ToggleButton)view;
-        boolean checked = toggleButton.isChecked();
-        if (checked) {
-            testTextView.setText("HLOLOLSDHFLIHESKJHDFLKUEHE");
-        }
+    public void setNodeButtonState(boolean bool) {
+        addNodeButton.setEnabled(bool);
+        removeNodeButton.setEnabled(bool);
+    }
+
+    public void setSaveButtonState() {
+        // check number of elements and if there are none grey out the button so people don't save a whole bunch of nothing
     }
 
 }
