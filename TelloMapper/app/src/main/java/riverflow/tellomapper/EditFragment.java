@@ -28,17 +28,17 @@ import java.util.ArrayList;
 public class EditFragment extends Fragment {
 
     // why do i have to put these up here again?
-    int test;
 
     public EditFragment() {
         // Required empty public constructor
     }
 
+    CanvasView canvasView;
     Button addNodeButton;
     Button removeNodeButton;
     Button saveButton;
     TextView coordTextView;
-    TextView testTextView;
+    TextView previewTextView;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
 
@@ -50,12 +50,11 @@ public class EditFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
-        View canvasView = view.findViewById(R.id.canvas_view);
+        canvasView = view.findViewById(R.id.canvas_view);
         coordTextView = view.findViewById(R.id.coord_text_view);
 
         // get rid of this one here and in xml code when done
-        testTextView = view.findViewById(R.id.test_text_view);
-        testTextView.setText(test + " ");
+        previewTextView = view.findViewById(R.id.test_text_view);
 
         // set the edit box
         Point size = new Point();
@@ -73,12 +72,6 @@ public class EditFragment extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                // get the coordinates
-                /*
-                x = event.getX();
-                y = event.getY();
-                */
-
                 tempCoordinate = new Coordinate();
                 tempCoordinate.setX(event.getX());
                 tempCoordinate.setY(event.getY());
@@ -88,8 +81,8 @@ public class EditFragment extends Fragment {
                 }
 
                 // let's draw pretty pictures
+                canvasView.drawCoordinate(true, tempCoordinate);
                 // jk let's test something out
-                testTextView.setText(test + " ");
 
                 return true;
             }
@@ -103,7 +96,7 @@ public class EditFragment extends Fragment {
                 ToggleButton toggleButton = (ToggleButton)v;
                 boolean checked = toggleButton.isChecked();
                 if (checked) {
-                    // testTextView.setText("HLOLOLSDHFLIHESKJHDFLKUEHE");
+                    // previewTextView.setText("HLOLOLSDHFLIHESKJHDFLKUEHE");
                     setNodeButtonState(true);
                 } else {
                     setNodeButtonState(false);
@@ -120,10 +113,14 @@ public class EditFragment extends Fragment {
                 if (tempCoordinate != null) {
                     // draw STUFF
                     coordinates.add(new Coordinate(tempCoordinate));
-                    tempCoordinate = null;
+                    canvasView.drawCoordinate(false, tempCoordinate);
+                    // tempCoordinate = null;
+                    displayCoordinatesPreview();
                 } else {
-                    testTextView.setText("No coordinate specified.");
+                    previewTextView.setText("No coordinate specified.");
                 }
+                setNodeButtonState(true);
+                autoSetSaveButtonState();
             }
         });
         removeNodeButton.setOnClickListener(new View.OnClickListener() {
@@ -131,9 +128,12 @@ public class EditFragment extends Fragment {
             public void onClick(View v) {
                 /*
                 // THIS IS NOT ACTUALLY WHAT IT'S SUPPOSED TO DO I just didn't want to make another button
-                testTextView.setText(coordinates + "");
+                previewTextView.setText(coordinates + "");
                 */
-                coordinates.remove(coordinates.size()-1);
+                    coordinates.remove(coordinates.size()-1);
+                displayCoordinatesPreview();
+                setNodeButtonState(true);
+                autoSetSaveButtonState();
             }
         });
         saveButton = view.findViewById(R.id.save_button);
@@ -148,11 +148,29 @@ public class EditFragment extends Fragment {
 
     public void setNodeButtonState(boolean bool) {
         addNodeButton.setEnabled(bool);
-        removeNodeButton.setEnabled(bool);
+        if (!coordinates.isEmpty() && bool) {
+            removeNodeButton.setEnabled(true);
+        } else {
+            removeNodeButton.setEnabled(false);
+        }
     }
 
-    public void setSaveButtonState() {
-        // check number of elements and if there are none grey out the button so people don't save a whole bunch of nothing
+    public void autoSetSaveButtonState() {
+        if (coordinates.isEmpty()) {
+            saveButton.setEnabled(false);
+        } else {
+            saveButton.setEnabled(true);
+        }
     }
+
+    public void displayCoordinatesPreview() {
+        String result = "Current coordinates:\n";
+        for (Coordinate coordinate : coordinates) {
+            result += coordinate + "\n";
+        }
+        previewTextView.setText(result);
+    }
+
+
 
 }
