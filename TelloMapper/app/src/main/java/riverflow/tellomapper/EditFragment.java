@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -39,6 +41,7 @@ public class EditFragment extends Fragment {
     Button saveButton;
     TextView coordTextView;
     TextView previewTextView;
+    ScrollView previewScrollView;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
 
@@ -53,8 +56,10 @@ public class EditFragment extends Fragment {
         canvasView = view.findViewById(R.id.canvas_view);
         coordTextView = view.findViewById(R.id.coord_text_view);
 
-        // get rid of this one here and in xml code when done
-        previewTextView = view.findViewById(R.id.test_text_view);
+
+        previewScrollView = view.findViewById(R.id.preview_scroll_view);
+        // preview text view is here to stay
+        previewTextView = view.findViewById(R.id.preview_text_view);
 
         // set the edit box
         Point size = new Point();
@@ -81,7 +86,7 @@ public class EditFragment extends Fragment {
                 }
 
                 // let's draw pretty pictures
-                canvasView.drawCoordinate(true, tempCoordinate);
+                canvasView.drawCoordinate(tempCoordinate, coordinates);
                 // jk let's test something out
 
                 return true;
@@ -113,7 +118,6 @@ public class EditFragment extends Fragment {
                 if (tempCoordinate != null) {
                     // draw STUFF
                     coordinates.add(new Coordinate(tempCoordinate));
-                    canvasView.drawCoordinate(false, tempCoordinate);
                     // tempCoordinate = null;
                     displayCoordinatesPreview();
                 } else {
@@ -121,6 +125,8 @@ public class EditFragment extends Fragment {
                 }
                 setNodeButtonState(true);
                 autoSetSaveButtonState();
+
+                canvasView.drawCoordinate(tempCoordinate, coordinates);
             }
         });
         removeNodeButton.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +140,8 @@ public class EditFragment extends Fragment {
                 displayCoordinatesPreview();
                 setNodeButtonState(true);
                 autoSetSaveButtonState();
+
+                canvasView.drawCoordinate(tempCoordinate, coordinates);
             }
         });
         saveButton = view.findViewById(R.id.save_button);
@@ -170,7 +178,5 @@ public class EditFragment extends Fragment {
         }
         previewTextView.setText(result);
     }
-
-
 
 }
