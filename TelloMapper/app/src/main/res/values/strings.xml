@@ -22,6 +22,12 @@
     <string name="add_node_button_text">Add Node</string>
     <string name="remove_node_button_text">Remove Node</string>
     <string name="save_button_text">Save Path</string>
+    <string name="scaling_seeker_text">Scaling</string>
+    <string name="zoom_seeker_text">Zoom</string>
+
+    <string name="no_coordinate_warning">No coordinate specified.</string>
+    <string name="path_title">List:</string>
+    <string name="current_coordinate_title">Selected:</string>
 
 
     <string name="fly_nav_text">Fly</string>

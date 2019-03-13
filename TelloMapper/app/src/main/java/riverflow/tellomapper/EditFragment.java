@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -39,11 +40,13 @@ public class EditFragment extends Fragment {
     Button addNodeButton;
     Button removeNodeButton;
     Button saveButton;
+    SeekBar scaleSeekBar;
     TextView coordTextView;
     TextView previewTextView;
     ScrollView previewScrollView;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
+    int maxPos = 100, minPos = 0, scaling = 20, increment = 20;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,10 +59,30 @@ public class EditFragment extends Fragment {
         canvasView = view.findViewById(R.id.canvas_view);
         coordTextView = view.findViewById(R.id.coord_text_view);
 
-
-        previewScrollView = view.findViewById(R.id.preview_scroll_view);
         // preview text view is here to stay
         previewTextView = view.findViewById(R.id.preview_text_view);
+        previewTextView.setMovementMethod(new ScrollingMovementMethod());
+
+        scaleSeekBar = view.findViewById(R.id.scale_seek_bar);
+        scaleSeekBar.setMax(maxPos - minPos);
+        scaleSeekBar.setProgress(scaling, true);
+        scaleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                scaling = progress + minPos;
+                canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         // set the edit box
         Point size = new Point();
@@ -80,13 +103,21 @@ public class EditFragment extends Fragment {
                 tempCoordinate = new Coordinate();
                 tempCoordinate.setX(event.getX());
                 tempCoordinate.setY(event.getY());
-                // display coordinates
-                if (tempCoordinate.getX() >= 0 && tempCoordinate.getY() >= 0 && tempCoordinate.getX() <= canvasWidth && tempCoordinate.getY() <= canvasWidth) {
-                    coordTextView.setText("Coordinates:\n" + tempCoordinate);
+                if (tempCoordinate.getX() < 0) {
+                    tempCoordinate.setX(0);
+                } else if (tempCoordinate.getX() > canvasWidth) {
+                    tempCoordinate.setX(canvasWidth);
                 }
+                if (tempCoordinate.getY() < 0) {
+                    tempCoordinate.setY(0);
+                } else if (tempCoordinate.getY() > canvasHeight) {
+                    tempCoordinate.setY(canvasHeight);
+                }
+                // display coordinates
+                coordTextView.setText(getResources().getString(R.string.current_coordinate_title) + "\n" + tempCoordinate);
 
                 // let's draw pretty pictures
-                canvasView.drawCoordinate(tempCoordinate, coordinates);
+                canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
                 // jk let's test something out
 
                 return true;
@@ -121,12 +152,12 @@ public class EditFragment extends Fragment {
                     // tempCoordinate = null;
                     displayCoordinatesPreview();
                 } else {
-                    previewTextView.setText("No coordinate specified.");
+                    previewTextView.setText(getResources().getString(R.string.no_coordinate_warning));
                 }
                 setNodeButtonState(true);
                 autoSetSaveButtonState();
 
-                canvasView.drawCoordinate(tempCoordinate, coordinates);
+                canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
             }
         });
         removeNodeButton.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +172,7 @@ public class EditFragment extends Fragment {
                 setNodeButtonState(true);
                 autoSetSaveButtonState();
 
-                canvasView.drawCoordinate(tempCoordinate, coordinates);
+                canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
             }
         });
         saveButton = view.findViewById(R.id.save_button);
@@ -172,9 +203,9 @@ public class EditFragment extends Fragment {
     }
 
     public void displayCoordinatesPreview() {
-        String result = "Current coordinates:\n";
-        for (Coordinate coordinate : coordinates) {
-            result += coordinate + "\n";
+        String result = getResources().getString(R.string.path_title) + "\n";
+        for (int i = 0; i < coordinates.size(); i++) {
+            result += (i + 1 + ": ") + coordinates.get(i) + "\n";
         }
         previewTextView.setText(result);
     }
