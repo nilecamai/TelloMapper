@@ -40,4 +40,8 @@ public class Coordinate {
         return "(" + (int)x + ", " + (int)y + ")";
     }
 
+    public String toReadable() {
+        return x + "\t" + y + "\n";
+    }
+
 }

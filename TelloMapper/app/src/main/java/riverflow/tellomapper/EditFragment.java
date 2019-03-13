@@ -1,9 +1,12 @@
 package riverflow.tellomapper;
 
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
@@ -22,6 +25,8 @@ import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 
@@ -43,11 +48,11 @@ public class EditFragment extends Fragment {
     SeekBar scaleSeekBar;
     TextView coordTextView;
     TextView previewTextView;
-    ScrollView previewScrollView;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
     int maxPos = 100, minPos = 0, scaling = 20, increment = 20;
 
+    @SuppressLint("ClickableViewAccessibility") // this appeared on suggestion, not sure, but we will watch :)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -179,6 +184,9 @@ public class EditFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.dialog_message).setTitle(R.string.dialog_title);
+                AlertDialog dialog = builder.create();
 
             }
         });
@@ -208,6 +216,29 @@ public class EditFragment extends Fragment {
             result += (i + 1 + ": ") + coordinates.get(i) + "\n";
         }
         previewTextView.setText(result);
+    }
+
+    public void save(View v) {
+        StringBuilder text = new StringBuilder();
+        for (Coordinate coordinate : coordinates) {
+            text.append(coordinate.toReadable());
+        }
+        String filename = "";
+        FileOutputStream fos = null;
+        try {
+            fos = getActivity().openFileOutput(filename, getActivity().MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
 }

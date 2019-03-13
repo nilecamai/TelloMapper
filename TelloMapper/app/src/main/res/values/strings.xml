@@ -29,6 +29,9 @@
     <string name="path_title">List:</string>
     <string name="current_coordinate_title">Selected:</string>
 
+    <string name="dialog_message">Message</string>
+    <string name="dialog_title">Title</string>
+
 
     <string name="fly_nav_text">Fly</string>
     <string name="fly_fragment_text">Fly a Path</string>
