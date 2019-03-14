@@ -71,11 +71,11 @@ public class FlyFragment extends Fragment {
         FileInputStream fis = null;
         try {
 
-            String path = Environment.getDataDirectory().toString(); // we need to get to /data/user/0/riverflow.tellomapper/files/test
+            String path = Environment.getDataDirectory().toString(); // we need to get to /data/user/0/riverflow.tellomapper/files/test; fix .getDataDirectory()
             File directory = new File(path);
             File[] files = directory.listFiles();
             List<String> fileNames = new ArrayList<String>();
-            for (File file: files) {
+            for (File file: files) { // NullPointerException
                 fileNames.add(file.toString());
                 Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
             }
