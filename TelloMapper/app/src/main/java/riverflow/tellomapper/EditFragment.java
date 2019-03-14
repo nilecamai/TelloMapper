@@ -3,30 +3,30 @@ package riverflow.tellomapper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.graphics.Canvas;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
-
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -54,7 +54,7 @@ public class EditFragment extends Fragment {
 
     @SuppressLint("ClickableViewAccessibility") // this appeared on suggestion, not sure, but we will watch :)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // variables n stuff
         Path path = new Path();
@@ -185,9 +185,68 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.dialog_message).setTitle(R.string.dialog_title);
-                AlertDialog dialog = builder.create();
+                final View mView = getLayoutInflater().inflate(R.layout.save_dialog, null);
+                // builder.setMessage(R.string.dialog_message).setTitle(R.string.dialog_title).setIcon(R.drawable.ic_dialog_save);
+                final EditText fileNameEdit = mView.findViewById(R.id.file_name);
+                Button cancelButton = mView.findViewById(R.id.cancel_button);
+                Button confirmButton = mView.findViewById(R.id.confirm_button);
 
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!fileNameEdit.getText().toString().isEmpty()) {
+                            String entry = fileNameEdit.getText().toString();
+                            boolean containsIllegal = false;
+                            for (char c : entry.toCharArray()) { // error handling illegal file names
+                                if (!containsIllegal) { // so that we don't run this a million times if we encounter a million illegal characters
+                                    switch (c) {
+                                        case '/':
+                                        case '\\':
+                                        case '?':
+                                        case '%':
+                                        case '*':
+                                        case ':':
+                                        case '|':
+                                        case '"':
+                                        case '<':
+                                        case '>':
+                                        case '.':
+                                        case ' ':
+                                            // illegal
+                                            containsIllegal = true;
+                                            Toast.makeText(getContext(), R.string.prompt_warning, Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+                                }
+                            }
+                            if (!containsIllegal) {
+                                save(getView(), entry);
+                                dialog.cancel();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), R.string.prompt_request, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
+            }
+        });
+        autoSetSaveButtonState();
+        Button loadButton = view.findViewById(R.id.load_button);
+        loadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load(getView());
             }
         });
         return view;
@@ -218,19 +277,59 @@ public class EditFragment extends Fragment {
         previewTextView.setText(result);
     }
 
-    public void save(View v) {
+    public void save(View v, String fileName) {
         StringBuilder text = new StringBuilder();
         for (Coordinate coordinate : coordinates) {
             text.append(coordinate.toReadable());
         }
-        String filename = "";
         FileOutputStream fos = null;
         try {
-            fos = getActivity().openFileOutput(filename, getActivity().MODE_PRIVATE);
+            fos = getActivity().openFileOutput(fileName, getActivity().MODE_PRIVATE);
+            fos.write(text.toString().getBytes());
+            Toast.makeText(getContext(), "Saved to " + getContext().getFilesDir() + "/" + fileName, Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    }
 
+    public void load(View v) {
+        FileInputStream fis = null;
+        try {
+            fis = getContext().openFileInput("test"); // hardcoded for, well, testing
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String text;
+
+            while ((text = br.readLine()) != null) {
+                sb.append(text).append("\n");
+            }
+
+            Toast.makeText(getContext(), sb.toString(), Toast.LENGTH_LONG).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public boolean isExternalStorageWritable() {

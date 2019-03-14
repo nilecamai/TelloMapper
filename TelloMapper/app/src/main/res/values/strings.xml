@@ -31,6 +31,7 @@
 
     <string name="dialog_message">Message</string>
     <string name="dialog_title">Title</string>
+    <string name="positive_button_text">Save</string>
 
 
     <string name="fly_nav_text">Fly</string>
@@ -39,5 +40,11 @@
 
     <string name="diagnostics_nav_text">Diagnostics</string>
     <string name="diagnostics_fragment_text">Diagnose Tello</string>
+    <string name="save_dialog_title">Save</string>
+    <string name="file_name_exit_text_hint">File Name</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="save_text">Save</string>
+    <string name="prompt_warning">Your filename contains illegal characters.</string>
+    <string name="prompt_request">Please enter a filename.</string>
 
 </resources>
