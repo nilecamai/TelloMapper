@@ -242,13 +242,6 @@ public class EditFragment extends Fragment {
             }
         });
         autoSetSaveButtonState();
-        Button loadButton = view.findViewById(R.id.load_button);
-        loadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                load(getView());
-            }
-        });
         return view;
     }
 

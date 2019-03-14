@@ -46,5 +46,7 @@
     <string name="save_text">Save</string>
     <string name="prompt_warning">Your filename contains illegal characters.</string>
     <string name="prompt_request">Please enter a filename.</string>
+    <string name="load_text">Load</string>
+    <string name="fly_button">Fly!</string>
 
 </resources>

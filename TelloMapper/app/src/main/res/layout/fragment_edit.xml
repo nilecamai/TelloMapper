@@ -205,13 +205,6 @@
                 android:layout_weight="1"
                 android:text="@string/save_button_text" />
 
-            <Button
-                android:id="@+id/load_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Load" />
-
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
