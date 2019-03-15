@@ -22,6 +22,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +42,7 @@ public class EditFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static final String docPath = "/tello_paths";
     CanvasView canvasView;
     Button addNodeButton;
     Button removeNodeButton;
@@ -50,6 +52,7 @@ public class EditFragment extends Fragment {
     TextView previewTextView;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
+    boolean checked = false;
     int maxPos = 100, minPos = 0, scaling = 20, increment = 20;
 
     @SuppressLint("ClickableViewAccessibility") // this appeared on suggestion, not sure, but we will watch :)
@@ -123,6 +126,7 @@ public class EditFragment extends Fragment {
 
                 // let's draw pretty pictures
                 canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
+                setNodeButtonState();
                 // jk let's test something out
 
                 return true;
@@ -135,19 +139,14 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ToggleButton toggleButton = (ToggleButton)v;
-                boolean checked = toggleButton.isChecked();
-                if (checked) {
-                    // previewTextView.setText("HLOLOLSDHFLIHESKJHDFLKUEHE");
-                    setNodeButtonState(true);
-                } else {
-                    setNodeButtonState(false);
-                }
+                checked = toggleButton.isChecked();
+                setNodeButtonState();
 
             }
         });
         addNodeButton = view.findViewById(R.id.add_node_button);
         removeNodeButton = view.findViewById(R.id.remove_node_button);
-        setNodeButtonState(false);
+        setNodeButtonState();
         addNodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +158,7 @@ public class EditFragment extends Fragment {
                 } else {
                     previewTextView.setText(getResources().getString(R.string.no_coordinate_warning));
                 }
-                setNodeButtonState(true);
+                setNodeButtonState();
                 autoSetSaveButtonState();
 
                 canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
@@ -174,7 +173,7 @@ public class EditFragment extends Fragment {
                 */
                     coordinates.remove(coordinates.size()-1);
                 displayCoordinatesPreview();
-                setNodeButtonState(true);
+                setNodeButtonState();
                 autoSetSaveButtonState();
 
                 canvasView.drawCoordinate(tempCoordinate, coordinates, scaling, increment);
@@ -245,13 +244,9 @@ public class EditFragment extends Fragment {
         return view;
     }
 
-    public void setNodeButtonState(boolean bool) {
-        addNodeButton.setEnabled(bool);
-        if (!coordinates.isEmpty() && bool) {
-            removeNodeButton.setEnabled(true);
-        } else {
-            removeNodeButton.setEnabled(false);
-        }
+    public void setNodeButtonState() {
+        addNodeButton.setEnabled(checked && tempCoordinate != null);
+        removeNodeButton.setEnabled(checked && !coordinates.isEmpty());
     }
 
     public void autoSetSaveButtonState() {
@@ -272,14 +267,22 @@ public class EditFragment extends Fragment {
 
     public void save(View v, String fileName) {
         StringBuilder text = new StringBuilder();
+        fileName += ".dat";
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath);
+        File file = new File(dir, fileName);
+        if (file.exists()) {
+            file.delete();
+            // maybe some error handling if we have time
+        }
         for (Coordinate coordinate : coordinates) {
-            text.append(coordinate.toReadable());
+            text.append(coordinate.toReadable()); // making the text file from the data
         }
         FileOutputStream fos = null;
+        Toast.makeText(getContext(), "Saved to " + file.toString(), Toast.LENGTH_LONG).show();
         try {
-            fos = getActivity().openFileOutput(fileName, getActivity().MODE_PRIVATE);
+            fos = new FileOutputStream(file);
             fos.write(text.toString().getBytes());
-            Toast.makeText(getContext(), "Saved to " + getContext().getFilesDir() + "/" + fileName, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Saved to " + file.toString(), Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package riverflow.tellomapper;
 
 
+import android.drm.DrmInfoRequest;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ public class FlyFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static final String docPath = "/tello_paths";
     TextView fileIndicator;
     Button loadButton;
     Button flyButton;
@@ -67,25 +69,27 @@ public class FlyFragment extends Fragment {
         return view;
     }
 
+    public void updateSpinner() {
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath);
+        File[] files = dir.listFiles();
+        List<String> fileNames = new ArrayList<String>();
+
+        for (File file: files) { // NullPointerException
+            fileNames.add(file.toString());
+            Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, fileNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fileSpinner.setAdapter(adapter);
+    }
+
     public void load(View v) {
         FileInputStream fis = null;
+
         try {
-
-            String path = Environment.getDataDirectory().toString(); // we need to get to /data/user/0/riverflow.tellomapper/files/test; fix .getDataDirectory()
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-            List<String> fileNames = new ArrayList<String>();
-            for (File file: files) { // NullPointerException
-                fileNames.add(file.toString());
-                Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, fileNames);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            fileSpinner.setAdapter(adapter);
-
-            Toast.makeText(getContext(), files.toString(), Toast.LENGTH_SHORT).show();
-
-            fis = getContext().openFileInput("test"); // hardcoded for, well, testing
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath + "/test.dat");
+            // fis = getContext().openFileInput("test.dat"); // hardcoded for, well, testing
+            fis = new FileInputStream(file);
 
             // sb just makes a string to display, delete later
             InputStreamReader isr = new InputStreamReader(fis);
@@ -113,6 +117,14 @@ public class FlyFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public File getPublicDocStorageDir(String docName) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), docName);
+        if (!file.mkdirs()) {
+            Log.e("Waba plorp", "Dirctory not created");
+        }
+        return file;
     }
 
 }
