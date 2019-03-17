@@ -24,15 +24,11 @@
     <string name="save_button_text">Save Path</string>
     <string name="scaling_seeker_text">Scaling</string>
     <string name="zoom_seeker_text">Zoom</string>
+    <string name="spinner_label">Load a Path</string>
 
     <string name="no_coordinate_warning">No coordinate specified.</string>
     <string name="path_title">List:</string>
     <string name="current_coordinate_title">Selected:</string>
-
-    <string name="dialog_message">Message</string>
-    <string name="dialog_title">Title</string>
-    <string name="positive_button_text">Save</string>
-
 
     <string name="fly_nav_text">Fly</string>
     <string name="fly_fragment_text">Fly a Path</string>

@@ -3,6 +3,7 @@ package riverflow.tellomapper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -13,10 +14,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 
 /**
@@ -42,12 +47,14 @@ public class EditFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static final String docPath = "/tello_paths";
+    public static final String docPath = "tello_paths";
     CanvasView canvasView;
     Button addNodeButton;
     Button removeNodeButton;
     Button saveButton;
+    Button loadButton;
     SeekBar scaleSeekBar;
+    Spinner fileSpinner;
     TextView coordTextView;
     TextView previewTextView;
     Coordinate tempCoordinate = null;
@@ -70,6 +77,17 @@ public class EditFragment extends Fragment {
         // preview text view is here to stay
         previewTextView = view.findViewById(R.id.preview_text_view);
         previewTextView.setMovementMethod(new ScrollingMovementMethod());
+
+        // file loading and stuff
+        fileSpinner = view.findViewById(R.id.file_spinner);
+        updateSpinner();
+        loadButton = view.findViewById(R.id.load_button);
+        loadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load(getView());
+            }
+        });
 
         scaleSeekBar = view.findViewById(R.id.scale_seek_bar);
         scaleSeekBar.setMax(maxPos - minPos);
@@ -268,7 +286,7 @@ public class EditFragment extends Fragment {
     public void save(View v, String fileName) {
         StringBuilder text = new StringBuilder();
         fileName += ".dat";
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath);
+        File dir = getContext().getDir(docPath, Context.MODE_PRIVATE);
         File file = new File(dir, fileName);
         if (file.exists()) {
             file.delete();
@@ -298,33 +316,50 @@ public class EditFragment extends Fragment {
         }
     }
 
-    public void load(View v) {
-        FileInputStream fis = null;
-        try {
-            fis = getContext().openFileInput("test"); // hardcoded for, well, testing
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String text;
+    public void updateSpinner() {
+        File dir = getContext().getDir(docPath, Context.MODE_PRIVATE);
+        // Toast.makeText(getContext(), dir.toString(), Toast.LENGTH_SHORT).show(); // /storage
+        File[] files = dir.listFiles();
+        List<String> fileNames = new ArrayList<String>();
 
-            while ((text = br.readLine()) != null) {
-                sb.append(text).append("\n");
+        for (File file: files) {
+            if (file.isFile()) {
+                fileNames.add(file.getName());
             }
+            // Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, fileNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fileSpinner.setAdapter(adapter);
+    }
 
-            Toast.makeText(getContext(), sb.toString(), Toast.LENGTH_LONG).show();
+    public void load(View v) {
+        try {
+            String name = getContext().getDir(docPath, Context.MODE_PRIVATE) + "/" + fileSpinner.getSelectedItem().toString();
+            File file = new File(name);
+
+            Scanner scan = new Scanner(file);
+
+            coordinates.clear();
+            Coordinate c = new Coordinate();
+            ArrayList<Coordinate> cs = new ArrayList<>();
+            while (scan.hasNextLine()) {
+                float f;
+                String coordinateLine = scan.nextLine();
+                Scanner coordinateScan = new Scanner(coordinateLine);
+                while (coordinateScan.hasNextFloat()) {
+                    f = coordinateScan.nextFloat();
+                    c.setX(f);
+                    f = coordinateScan.nextFloat();
+                    c.setY(f);
+                }
+                cs.add(c);
+                canvasView.drawCoordinate(c, coordinates, scaling, increment);
+                coordinates.add(new Coordinate(c));
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

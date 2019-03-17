@@ -1,6 +1,7 @@
 package riverflow.tellomapper;
 
 
+import android.content.Context;
 import android.drm.DrmInfoRequest;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,7 +37,7 @@ public class FlyFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static final String docPath = "/tello_paths";
+    public static final String docPath = "tello_paths";
     TextView fileIndicator;
     Button loadButton;
     Button flyButton;
@@ -56,6 +57,7 @@ public class FlyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 load(getView());
+                //testLoad();
             }
         });
 
@@ -66,29 +68,40 @@ public class FlyFragment extends Fragment {
             }
         });
 
+        updateSpinner();
+
         return view;
     }
 
     public void updateSpinner() {
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath);
+        File dir = getContext().getDir(docPath, Context.MODE_PRIVATE);
+        // Toast.makeText(getContext(), dir.toString(), Toast.LENGTH_SHORT).show(); // /storage
         File[] files = dir.listFiles();
         List<String> fileNames = new ArrayList<String>();
 
-        for (File file: files) { // NullPointerException
-            fileNames.add(file.toString());
-            Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
+        for (File file: files) {
+            if (file.isFile()) {
+                fileNames.add(file.getName());
+            }
+            // Toast.makeText(getContext(), file.toString(), Toast.LENGTH_SHORT).show();
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, fileNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fileSpinner.setAdapter(adapter);
     }
 
+    public void testLoad() {
+        Toast.makeText(getContext(), getContext().getDir(docPath, Context.MODE_PRIVATE) + fileSpinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+    }
+
     public void load(View v) {
         FileInputStream fis = null;
 
         try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + docPath + "/test.dat");
-            // fis = getContext().openFileInput("test.dat"); // hardcoded for, well, testing
+            String name = getContext().getDir(docPath, Context.MODE_PRIVATE) + "/" + fileSpinner.getSelectedItem().toString();
+            File file = new File(name);
+            //fis = getContext().openFileInput(fileSpinner.getSelectedItem().toString());
+            //fis = getContext().openFileInput("test.dat"); // hardcoded for, well, testing
             fis = new FileInputStream(file);
 
             // sb just makes a string to display, delete later
@@ -119,12 +132,16 @@ public class FlyFragment extends Fragment {
         }
     }
 
+    public void fly() {
+        // call go code
+    }
+
     public File getPublicDocStorageDir(String docName) {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), docName);
         if (!file.mkdirs()) {
             Log.e("Waba plorp", "Dirctory not created");
         }
-        return file;
+        return file; //dab
     }
 
 }
