@@ -9,29 +9,36 @@
     tools:context=".FlyFragment">
 
 
-    <Button
-        android:id="@+id/load_button"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/spinner_label"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/load_text" />
+        android:text="@string/spinner_label_text" />
 
     <Spinner
         android:id="@+id/file_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/file_indicator"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/load_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_height="wrap_content" />
+        android:text="@string/load_text" />
 
     <Button
         android:id="@+id/fly_button"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/fly_button" />
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/delete_text" />
 
 </LinearLayout>

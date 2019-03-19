@@ -1,13 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".HomeFragment">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/home_fragment_text" />
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/home_fragment_title"
+        android:textAlignment="center" />
 
-</FrameLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimary"
+        android:text="@string/home_fragment_subtitle"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/edit_home_button"
+        android:layout_marginTop="140dp"
+        android:layout_width="200dp"
+        android:height="100dp"
+        android:layout_gravity="center"
+        android:text="@string/edit_fragment_text"
+        android:textSize="20sp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/fly_home_button"
+        android:layout_marginTop="40dp"
+        android:layout_width="200dp"
+        android:height="100dp"
+        android:layout_gravity="center"
+        android:text="@string/fly_fragment_text"
+        android:textSize="20sp"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

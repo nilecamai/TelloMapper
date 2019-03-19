@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fly.Fly;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,33 +40,49 @@ public class FlyFragment extends Fragment {
     }
 
     public static final String docPath = "tello_paths";
-    TextView fileIndicator;
     Button loadButton;
     Button flyButton;
+    Button deleteButton;
     Spinner fileSpinner;
+    String data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_fly, container, false);
-        fileIndicator = view.findViewById(R.id.file_indicator);
         loadButton = view.findViewById(R.id.load_button);
         flyButton = view.findViewById(R.id.fly_button);
+        deleteButton = view.findViewById(R.id.delete_button);
         fileSpinner = view.findViewById(R.id.file_spinner);
 
         loadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 load(getView());
-                //testLoad();
+                if (data != null) {
+                    flyButton.setEnabled(true);
+                    deleteButton.setEnabled(true);
+                }
             }
         });
 
+        flyButton.setEnabled(false);
+        deleteButton.setEnabled(false);
         flyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "POOPITY SCOOP", Toast.LENGTH_SHORT).show();
+                if (data != null) {
+                    fly.Fly.fly(data);
+                }
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delete(getView());
+                updateSpinner();
             }
         });
 
@@ -114,7 +132,8 @@ public class FlyFragment extends Fragment {
                 sb.append(text).append("\n");
             }
 
-            Toast.makeText(getContext(), sb.toString(), Toast.LENGTH_LONG).show();
+            data = sb.toString();
+            //Toast.makeText(getContext(), data, Toast.LENGTH_LONG).show();
             //
 
         } catch (FileNotFoundException e) {
@@ -132,8 +151,14 @@ public class FlyFragment extends Fragment {
         }
     }
 
-    public void fly() {
-        // call go code
+    public void delete(View v) {
+        try {
+            String name = getContext().getDir(docPath, Context.MODE_PRIVATE) + "/" + fileSpinner.getSelectedItem().toString();
+            File file = new File(name);
+            file.delete();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public File getPublicDocStorageDir(String docName) {

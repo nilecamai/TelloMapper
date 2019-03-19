@@ -88,10 +88,6 @@ public class MainActivity extends AppCompatActivity
             setTitle(getString(R.string.edit_fragment_text));
             fragment = new EditFragment();
             fragmentTransaction.replace(R.id.content_main, fragment, "Edit").commit();
-        } else if (id == R.id.nav_diagnostics) {
-            setTitle(getString(R.string.diagnostics_fragment_text));
-            fragment = new DiagnosticsFragment();
-            fragmentTransaction.replace(R.id.content_main, fragment, "Diagnostics").commit();
         } else if (id == R.id.nav_fly) {
             setTitle(getString(R.string.fly_fragment_text));
             fragment = new FlyFragment();
