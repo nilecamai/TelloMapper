@@ -1,6 +1,7 @@
 package riverflow.tellomapper;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.drm.DrmInfoRequest;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +47,7 @@ public class FlyFragment extends Fragment {
     Button deleteButton;
     Spinner fileSpinner;
     String data;
+    List<String> fileNames;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,15 +63,15 @@ public class FlyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 load(getView());
-                if (data != null) {
-                    flyButton.setEnabled(true);
-                    deleteButton.setEnabled(true);
-                }
+                updateButtons();
             }
         });
 
+        loadButton.setEnabled(false);
         flyButton.setEnabled(false);
         deleteButton.setEnabled(false);
+        updateSpinner();
+        updateButtons();
         flyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,12 +84,38 @@ public class FlyFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delete(getView());
-                updateSpinner();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final View mView = getLayoutInflater().inflate(R.layout.delete_overwrite_dialog, null);
+                Button cancelButton = mView.findViewById(R.id.cancel_delete_button);
+                Button confirmButton = mView.findViewById(R.id.confirm_delete_button);
+                TextView warningLabel = mView.findViewById(R.id.delete_overwrite_message);
+                if (fileSpinner.getSelectedItem() != null) {
+                    warningLabel.setText("Are you sure you want to delete \"" + fileSpinner.getSelectedItem().toString() + "\"?");
+                }
+
+                builder.setView(mView);
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delete(getView());
+                        updateSpinner();
+                        updateButtons();
+                        dialog.cancel();
+                    }
+                });
+
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
             }
         });
 
-        updateSpinner();
 
         return view;
     }
@@ -95,7 +124,7 @@ public class FlyFragment extends Fragment {
         File dir = getContext().getDir(docPath, Context.MODE_PRIVATE);
         // Toast.makeText(getContext(), dir.toString(), Toast.LENGTH_SHORT).show(); // /storage
         File[] files = dir.listFiles();
-        List<String> fileNames = new ArrayList<String>();
+        fileNames = new ArrayList<String>();
 
         for (File file: files) {
             if (file.isFile()) {
@@ -110,6 +139,25 @@ public class FlyFragment extends Fragment {
 
     public void testLoad() {
         Toast.makeText(getContext(), getContext().getDir(docPath, Context.MODE_PRIVATE) + fileSpinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateButtons() {
+        if (data != null) {
+            flyButton.setEnabled(true);
+            deleteButton.setEnabled(true);
+        } else {
+            flyButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+        }
+        if (fileNames != null) {
+            if (fileNames.size() > 0) {
+                loadButton.setEnabled(true);
+            } else {
+                loadButton.setEnabled(false);
+            }
+        } else {
+            loadButton.setEnabled(false);
+        }
     }
 
     public void load(View v) {
@@ -156,6 +204,7 @@ public class FlyFragment extends Fragment {
             String name = getContext().getDir(docPath, Context.MODE_PRIVATE) + "/" + fileSpinner.getSelectedItem().toString();
             File file = new File(name);
             file.delete();
+            data = null;
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

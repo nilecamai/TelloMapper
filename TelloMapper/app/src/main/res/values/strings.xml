@@ -48,5 +48,7 @@
     <string name="spinner_label_text">Select a file:</string>
     <string name="delete_text">Delete</string>
     <string name="home_fragment_subtitle">Let\'s get started:</string>
+    <string name="yes">Yes</string>
+
 
 </resources>

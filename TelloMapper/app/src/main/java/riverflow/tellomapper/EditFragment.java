@@ -57,6 +57,7 @@ public class EditFragment extends Fragment {
     Spinner fileSpinner;
     TextView coordTextView;
     TextView previewTextView;
+    List<String> fileNames;
     Coordinate tempCoordinate = null;
     ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
     boolean checked = false;
@@ -80,8 +81,9 @@ public class EditFragment extends Fragment {
 
         // file loading and stuff
         fileSpinner = view.findViewById(R.id.file_spinner);
-        updateSpinner();
         loadButton = view.findViewById(R.id.load_button);
+        loadButton.setEnabled(false);
+        updateSpinner();
         loadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,7 +218,7 @@ public class EditFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (!fileNameEdit.getText().toString().isEmpty()) {
-                            String entry = fileNameEdit.getText().toString();
+                            final String entry = fileNameEdit.getText().toString();
                             boolean containsIllegal = false;
                             for (char c : entry.toCharArray()) { // error handling illegal file names
                                 if (!containsIllegal) { // so that we don't run this a million times if we encounter a million illegal characters
@@ -241,7 +243,45 @@ public class EditFragment extends Fragment {
                                 }
                             }
                             if (!containsIllegal) {
-                                save(getView(), entry);
+                                boolean hasExisting = false;
+                                if (fileNames != null) {
+                                    for (String existingFile : fileNames) {
+                                        if ((entry + ".dat").equals(existingFile)) {
+                                            hasExisting = true;
+                                        }
+                                    }
+                                }
+                                if (hasExisting) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    final View mView = getLayoutInflater().inflate(R.layout.delete_overwrite_dialog, null);
+                                    Button cancelButton = mView.findViewById(R.id.cancel_delete_button);
+                                    Button confirmButton = mView.findViewById(R.id.confirm_delete_button);
+                                    TextView warningLabel = mView.findViewById(R.id.delete_overwrite_message);
+                                    warningLabel.setText("A file with name \"" + entry + ".dat\" already exists. Are you sure you want to overwrite \"" + entry + ".dat\"?");
+
+                                    builder.setView(mView);
+                                    final AlertDialog subDialog = builder.create();
+                                    subDialog.show();
+
+                                    confirmButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            save(getView(), entry);
+                                            subDialog.cancel();
+                                            updateSpinner();
+                                        }
+                                    });
+
+                                    cancelButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            subDialog.cancel();
+                                        }
+                                    });
+                                } else {
+                                    save(getView(), entry);
+                                    updateSpinner();
+                                }
                                 dialog.cancel();
                             }
                         } else {
@@ -296,7 +336,6 @@ public class EditFragment extends Fragment {
             text.append(coordinate.toReadable()); // making the text file from the data
         }
         FileOutputStream fos = null;
-        Toast.makeText(getContext(), "Saved to " + file.toString(), Toast.LENGTH_LONG).show();
         try {
             fos = new FileOutputStream(file);
             fos.write(text.toString().getBytes());
@@ -320,7 +359,7 @@ public class EditFragment extends Fragment {
         File dir = getContext().getDir(docPath, Context.MODE_PRIVATE);
         // Toast.makeText(getContext(), dir.toString(), Toast.LENGTH_SHORT).show(); // /storage
         File[] files = dir.listFiles();
-        List<String> fileNames = new ArrayList<String>();
+        fileNames = new ArrayList<String>();
 
         for (File file: files) {
             if (file.isFile()) {
@@ -331,6 +370,9 @@ public class EditFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, fileNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fileSpinner.setAdapter(adapter);
+        if (fileNames.size() > 0) {
+            loadButton.setEnabled(true);
+        }
     }
 
     public void load(View v) {
